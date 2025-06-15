@@ -1,0 +1,48 @@
+name: Security-check
+
+on: 
+  push:
+    branches:
+      -main
+    pull_request:
+      branches:
+        -main
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+
+  steps:
+    -name: Checkout code
+    uses: actions/checkout@v2
+
+
+    -name: Install slither
+    run: |
+      pip install slither-analyzer
+    
+   -name: Run Slither 
+    run: |
+      docker run -v "$PWD":/home --workdir /home trailofbits/slither slither .
+    continue-on-error: true  
+
+    -name: Install Echidna 
+    run: |
+      docker pull trailofbits/echidna
+      docker run -it -v "$PWD":/home trailofbits/echidna
+    continue-on-error: true
+    -name: Save Slither Report
+    if: failure()  
+    run: |
+      mkdir -p slither-report
+      docker run -v "$PWD":/home --workdir /home trailofbits/slither slither . --json slither-report/report.json
+      echo "Slither report saved at slither-report/report.json"
+    -name: Save Echidna Report
+    if: failure()  # If Echidna finds any issues
+    run: |
+      mkdir -p echidna-report
+      docker run -v "$PWD":/home --workdir /home trailofbits/echidna cp echidna-report/* echidna-report/
+      echo "Echidna report saved at echidna-report/"
+
+    
+

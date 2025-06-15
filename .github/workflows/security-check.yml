@@ -23,19 +23,19 @@ jobs:
       - name: Run Slither
         run: |
           docker run -v "$PWD":/home --workdir /home trailofbits/slither slither /home
-        continue-on-error: true    
+        continue-on-error: true  
 
       - name: Install Echidna
         run: |
           docker pull trailofbits/echidna
-          docker run -d -v "$PWD":/home --workdir /home trailofbits/echidna echidna-test ./contracts --contract "MyToken" --max-time 60
+          docker run -it -v "$PWD":/home --workdir /home trailofbits/echidna echidna-test ./contracts --contract "MyToken" --max-time 60
         continue-on-error: true
 
       - name: Save Slither Report
         if: failure()
         run: |
           mkdir -p slither-report
-          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither . --json slither-report/report.json
+          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither /home --json slither-report/report.json
           echo "Slither report saved at slither-report/report.json"
 
       - name: Save Echidna Report

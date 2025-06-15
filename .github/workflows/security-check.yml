@@ -22,8 +22,8 @@ jobs:
 
       - name: Run Slither
         run: |
-          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither .
-        continue-on-error: true  
+          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither /home
+        continue-on-error: true    
 
       - name: Install Echidna
         run: |

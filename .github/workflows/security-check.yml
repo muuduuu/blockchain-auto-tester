@@ -28,7 +28,7 @@ jobs:
       - name: Install Echidna
         run: |
           docker pull trailofbits/echidna
-          docker run -it -v "$PWD":/home --workdir /home trailofbits/echidna echidna-test ./contracts --contract "MyToken" --max-time 60
+          docker run -d -v "$PWD":/home --workdir /home trailofbits/echidna echidna-test ./contracts --contract "MyToken" --max-time 60
         continue-on-error: true
 
       - name: Save Slither Report

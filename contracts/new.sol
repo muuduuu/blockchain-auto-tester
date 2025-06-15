@@ -14,7 +14,7 @@ contract MyToken{
     function approve(address spender, uint value) public returns (bool) {
         allowed[msg.sender][spender] = value;
         return true;
-
+        ding ding ding
     }
 
 

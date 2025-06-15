@@ -18,28 +18,29 @@ jobs:
 
       - name: Install slither
         run: |
+          python -m pip install --upgrade pip
           pip install slither-analyzer
 
       - name: Run Slither
         run: |
-          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither /home
+          slither . --exclude-tests --enable-all-detectors
         continue-on-error: true  
 
-      - name: Install Echidna
+      - name: Install Echidna and run fuzz testing
         run: |
           docker pull trailofbits/echidna
           docker run -it -v "$PWD":/home --workdir /home trailofbits/echidna echidna-test ./contracts --contract "MyToken" --max-time 60
         continue-on-error: true
 
       - name: Save Slither Report
-        if: failure()
+        if: failure()  
         run: |
           mkdir -p slither-report
-          docker run -v "$PWD":/home --workdir /home trailofbits/slither slither /home --json slither-report/report.json
+          slither . --json slither-report/report.json
           echo "Slither report saved at slither-report/report.json"
 
       - name: Save Echidna Report
-        if: failure()
+        if: failure()  
         run: |
           mkdir -p echidna-report
           docker run -v "$PWD":/home --workdir /home trailofbits/echidna cp echidna-report/* echidna-report/

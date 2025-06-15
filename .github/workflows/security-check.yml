@@ -3,7 +3,7 @@ name: Security-check
 on:
   push:
     branches:
-      - main
+      - dev
   pull_request:
     branches:
       - main
@@ -23,7 +23,7 @@ jobs:
 
       - name: Run Slither
         run: |
-          slither . 
+          slither ./contracts  # Explicitly run slither on the contracts directory
         continue-on-error: true  
 
       - name: Install Echidna and run fuzz testing in detached mode
@@ -36,7 +36,7 @@ jobs:
         if: failure()  
         run: |
           mkdir -p slither-report
-          slither . --json slither-report/report.json
+          slither ./contracts --json slither-report/report.json
           echo "Slither report saved at slither-report/report.json"
 
       - name: Save Echidna Report
